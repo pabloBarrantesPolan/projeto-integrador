@@ -3,22 +3,18 @@ package br.com.generation.projeto.ateliedigital.ateliedigital.cliente;
 
 
 import br.com.generation.projeto.ateliedigital.ateliedigital.AteliedigitalApplication;
-import com.github.javafaker.Faker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,31 +37,72 @@ public class ClienteControllerIntegrationTest  {
     @Test
     public void save(){
 
-        Faker faker = new Faker();
-        Random random = new Random();
         for (int i = 0; i < 10; i++) {
-
-            Cliente cliente = new Cliente();
-            cliente.setNome(faker.name().firstName());
-            cliente.setEmail(faker.name().username()+"@mail.com");
-            cliente.setCep(random.nextInt(100000));
-            cliente.setNumero(random.nextInt(10000));
-            cliente.setSenha(faker.beer().malt()+ faker.chuckNorris());
-
-            ResponseEntity<Cliente> postResponse = testRestTemplate.postForEntity(getRootUrl("/novo/cliente"), cliente, Cliente.class);
+            ResponseEntity<Cliente> postResponse = testRestTemplate.postForEntity(getRootUrl("/novo/cliente"),
+                    ClienteMock.getClienteMock(), Cliente.class);
 
             assertNotNull(postResponse);
             assertEquals(201, postResponse.getStatusCodeValue());
+        }
 
+    }
+
+
+    @Test
+    public void findAll(){
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity(null, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(getRootUrl("/clientes"), HttpMethod.GET, entity, String.class);
+        assertNotNull(response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+
+    }
+
+    @Test
+    public void findById(){
+//todo --- pesquisar falso positivo do metodo
+        int id = 3;
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity(null, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(getRootUrl("/cliente/"+ id), HttpMethod.GET, entity, String.class);
+        assertNotNull(response.getBody());
+        assertEquals(entity,);
+    }
+
+
+    @Test
+    public void update(){
+
+        int id = 1;
+        Cliente cliente = testRestTemplate.getForObject(getRootUrl("/clientes/" +id) , Cliente.class);
+
+        String novoNome = ClienteMock.getClienteMock().getNome();
+        cliente.setNome(novoNome);
+        String novoEmail = ClienteMock.getClienteMock().getEmail();
+        cliente.setEmail(novoEmail);
+        Integer novoCep = ClienteMock.getClienteMock().getCep();
+        cliente.setCep(novoCep);
+        Integer novoNumero = ClienteMock.getClienteMock().getNumero();
+        cliente.setNumero(novoNumero);
+        String novaSenha = ClienteMock.getClienteMock().getSenha();
+        cliente.setSenha(novaSenha);
+
+      testRestTemplate.put(getRootUrl("/clientes/"+ id), cliente);
+        assertEquals(novoNome, cliente.getNome());
+
+    }
+
+    @Test
+    public void testDeleteCliente() {
+        int id = 2;
+        Cliente cliente = testRestTemplate.getForObject(getRootUrl("/cliente/"+ id), Cliente.class);
+        assertNotNull(cliente);
+        testRestTemplate.delete(getRootUrl("/cliente/"+ id));
+        try {
+           testRestTemplate.getForObject(getRootUrl("/cliente/"+ id) , Cliente.class);
+        } catch (final HttpClientErrorException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
         }
     }
-//TODO- teste ClienteController- findAll()
-//    @Test
-//    public void findAll(){
-//        HttpHeaders headers = new HttpHeaders();
-//        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-//        ResponseEntity<String> response = restTemplate.exchange(getRootUrl("/clientes"), HttpMethod.GET, entity, String.class);
-//        assertNotNull(response.getBody());
-//
-//    }
+
 }
