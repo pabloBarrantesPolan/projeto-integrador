@@ -4,6 +4,8 @@ import br.com.generation.projeto.ateliedigital.ateliedigital.cliente.Cliente;
 import br.com.generation.projeto.ateliedigital.ateliedigital.resourceNotFoundException.ResourceNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,6 +39,14 @@ public class FornecedorController {
 
     @GetMapping(value = "/mostra/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation(value = "Pesquisa um fornecedor pelo ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "tudo certo"),
+            @ApiResponse(code = 201, message = "Inserido"),
+            @ApiResponse(code = 401, message = "Não autorizado"),
+            @ApiResponse(code = 403, message = "tururu"),
+            @ApiResponse(code = 404, message = "probrema no sitema")
+    })
+
     public Optional<Fornecedor> findById(@PathVariable Long id){
         return repository.findById(id);
     }
