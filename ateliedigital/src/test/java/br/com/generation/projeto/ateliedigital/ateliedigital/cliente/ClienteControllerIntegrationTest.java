@@ -37,7 +37,7 @@ public class ClienteControllerIntegrationTest  {
     @Test
     public void save(){
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             ResponseEntity<Cliente> postResponse = testRestTemplate.postForEntity(getRootUrl("/novo/cliente"),
                     ClienteMock.getClienteMock(), Cliente.class);
 
@@ -57,17 +57,17 @@ public class ClienteControllerIntegrationTest  {
         assertEquals(200, response.getStatusCodeValue());
 
     }
-
-    @Test
-    public void findById(){
 //todo --- pesquisar falso positivo do metodo
-        int id = 3;
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<String> entity = new HttpEntity(null, headers);
-        ResponseEntity<String> response = testRestTemplate.exchange(getRootUrl("/cliente/"+ id), HttpMethod.GET, entity, String.class);
-        assertNotNull(response.getBody());
-        assertEquals(entity,);
-    }
+//    @Test
+//    public void findById(){
+//
+//        int id = 3;
+//        HttpHeaders headers = new HttpHeaders();
+//        HttpEntity<String> entity = new HttpEntity(null, headers);
+//        ResponseEntity<String> response = testRestTemplate.exchange(getRootUrl("/cliente/"+ id), HttpMethod.GET, entity, String.class);
+//        assertNotNull(response.getBody());
+//        assertEquals(entity,);
+//    }
 
 
     @Test

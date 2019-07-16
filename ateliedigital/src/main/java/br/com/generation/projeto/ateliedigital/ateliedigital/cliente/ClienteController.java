@@ -1,17 +1,21 @@
 package br.com.generation.projeto.ateliedigital.ateliedigital.cliente;
 
 import br.com.generation.projeto.ateliedigital.ateliedigital.resourceNotFoundException.ResourceNotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1")
+@Api
+@RequestMapping(value = "/api/v1/cliente", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ClienteController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClienteController.class);
@@ -20,25 +24,27 @@ public class ClienteController {
     private ClienteRepository repository;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/novo/cliente")
+    @PostMapping(value = "/novo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "Salva um novo Cliente")
     public Cliente Save(@RequestBody Cliente cliente){
 
         return repository.save(cliente);
 
     }
-
-    @GetMapping("/clientes")
+    @GetMapping(value = "/lista", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "Mostra lista de CLientes")
     public List<Cliente> findAll(){
         logger.info("foi!");
         return repository.findAll();
     }
-
-    @GetMapping("/cliente/{id}")
+    @GetMapping(value = "/mostra/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "Pesquisa um Cliente pelo ID")
     public Optional<Cliente> findById(@PathVariable Long id){
         return repository.findById(id);
     }
 
-    @PutMapping("/clientes/{id}")
+    @PutMapping(value = "/atualiza/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "Atualiza um CLiente pelo ID")
     public Cliente update(@PathVariable Long id, @RequestBody Cliente cliente) throws ResourceNotFoundException {
 
           return repository.findById(id).map( cliente1 -> {
@@ -51,9 +57,10 @@ public class ClienteController {
           }).orElseThrow(()->
                   new ResourceNotFoundException("Não existe esse usuario"));
 
-        }
+    }
 
-    @DeleteMapping("/cliente/{id}")
+    @DeleteMapping(value = "/apaga/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation(value = "Apaga um Cliente pelo ID")
     public void deleteById(@PathVariable Long id){
         repository.deleteById(id);
     }

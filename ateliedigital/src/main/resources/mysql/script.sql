@@ -31,4 +31,5 @@ create table planos(
     valor decimal(5,2) not null
 );
 
+SELECT * FROM cliente;
 
