@@ -47,13 +47,13 @@ public class ClienteController {
     @ApiOperation(value = "Atualiza um CLiente pelo ID")
     public Cliente update(@PathVariable Long id, @RequestBody Cliente cliente) throws ResourceNotFoundException {
 
-          return repository.findById(id).map( cliente1 -> {
-            cliente1.setNome(cliente.getNome());
-            cliente1.setEmail(cliente.getEmail());
-            cliente1.setCep(cliente.getCep());
-            cliente1.setNumero(cliente.getNumero());
-            cliente1.setSenha(cliente.getSenha());
-            return repository.save(cliente1);
+          return repository.findById(id).map( c -> {
+            c.setNome(cliente.getNome());
+            c.setEmail(cliente.getEmail());
+            c.setCep(cliente.getCep());
+            c.setNumero(cliente.getNumero());
+            c.setSenha(cliente.getSenha());
+            return repository.save(c);
           }).orElseThrow(()->
                   new ResourceNotFoundException("Não existe esse usuario"));
 
